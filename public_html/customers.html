@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer List</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container mt-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>All Customers</h2>
+        <a href="/" class="btn btn-primary">Add New Customer</a>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-bordered table-striped" id="customersTable">
+            <thead class="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Street</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Postal Code</th>
+                <th>Country</th>
+                <th>Registration Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Customer rows will be inserted here -->
+            </tbody>
+          </table>
+          <div id="errorMsg" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      async function loadCustomers() {
+        const response = await fetch("/api/customers");
+        const data = await response.json();
+        const tableBody = document.querySelector("#customersTable tbody");
+        const errorMsg = document.getElementById("errorMsg");
+        if (data.success) {
+          tableBody.innerHTML = "";
+          data.customers.forEach((cust) => {
+            tableBody.innerHTML += `
+            <tr>
+              <td>${cust.CUSTOMER_ID}</td>
+              <td>${cust.CUSTOMER_FIRST_NAME}</td>
+              <td>${cust.CUSTOMER_LAST_NAME}</td>
+              <td>${cust.CUSTOMER_EMAIL_ADDRESS}</td>
+              <td>${cust.CUSTOMER_PHONE_NUMBER}</td>
+              <td>${cust.ADDRESS_STREET}</td>
+              <td>${cust.ADDRESS_CITY}</td>
+              <td>${cust.ADDRESS_STATE}</td>
+              <td>${cust.ADDRESS_POSTAL_CODE}</td>
+              <td>${cust.ADDRESS_COUNTRY}</td>
+              <td>${
+                cust.CUSTOMER_REGISTRATION_DATE
+                  ? cust.CUSTOMER_REGISTRATION_DATE.substring(0, 10)
+                  : ""
+              }</td>
+            </tr>
+          `;
+          });
+        } else {
+          errorMsg.innerHTML = `<div class='alert alert-danger'>${data.errors.join(
+            "<br>"
+          )}</div>`;
+        }
+      }
+      window.onload = loadCustomers;
+    </script>
+  </body>
+</html>
